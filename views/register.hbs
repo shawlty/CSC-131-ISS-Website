@@ -28,23 +28,41 @@
     </ul>
   </nav>
 
-  <div class="container mt-4">
-    
-  </div>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>Register Form</h4>
+            </div>
+            <div class="card-body">
+                <section class="section">
+                    <form action="/auth/register" method="POST">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="space"></label>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="space"></label>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="space"></label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register User</but>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
 
-  <div class="container">
-    <section class="section">
-      <h2>Welcome to ISS Hub!</h2>
-      <p>The ISS Hub provides a centralized platform for international students at CSUS to access vital resources, engage with the community, and stay updated on campus events.</p>
-    </section>
-    <section class="section">
-      <h2>Latest Updates</h2>
-      <ul>
-        <li><strong>February 28, 2024:</strong> New academic support resources added.</li>
-        <li><strong>February 25, 2024:</strong> Cultural event registration now open for spring semester.</li>
-        <li><strong>February 20, 2024:</strong> Join our community forums to connect with other international students!</li>
-      </ul>
-    </section>
-  </div>
 </body>
 </html>

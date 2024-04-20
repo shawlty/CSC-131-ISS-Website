@@ -29,12 +29,21 @@ body {
     color: #333; /* Dark gray color */
     text-decoration: none;
     padding: 5px 10px;
+    font-weight: bold;
   }
   .container {
     max-width: 800px;
     margin: auto;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
   .section {
     margin-bottom: 20px;
   }
