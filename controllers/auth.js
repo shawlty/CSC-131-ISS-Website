@@ -3,6 +3,7 @@ const { request } = require("express");
 const mysql = require("mysql");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { promisify } = require('util');
 
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -10,13 +11,57 @@ const db = mysql.createConnection({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
+// Define a Handlebars helper function to capitalize the first letter of a string
+
+
+
+exports.login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      if( !email || !password ) {
+        return res.status(400).render('login', {
+          message: 'Please provide an email and password'
+        })
+      }
+  
+      db.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
+        console.log(results);
+        if( !results || !(await bcrypt.compare(password, results[0].password)) ) {
+          res.status(401).render('login', {
+            message: 'Email or Password is incorrect'
+          })
+        } else {
+          const id = results[0].id;
+  
+          const token = jwt.sign({ id }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN
+          });
+  
+          console.log("The token is: " + token);
+  
+          const cookiesOptions = {
+            expires: new Date(
+              Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+            ),
+            httpOnly: true
+          }
+  
+          res.cookie('jwt', token, cookiesOptions );
+          res.status(200).redirect("/");
+        }
+  
+      })
+  
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 exports.register = (req,res) =>{
     console.log(req.body);
     // const name = request.body.name;
     // const email = request.body.email;
-    // const password = requues.bod.password;
-    // const passwordConfirm = requues.bod.passwordConfirm;
 
     const { name, email, password, passwordConfirm} = req.body;
 
@@ -25,7 +70,7 @@ exports.register = (req,res) =>{
             console.log(error);
         }
         if (results.length > 0 ){
-            return results.render('register', {
+            return res.render('register', {
                 message: 'That email is already in use'
             })
         } else if(password !== passwordConfirm){
@@ -33,11 +78,67 @@ exports.register = (req,res) =>{
                 message: 'Passwords do not match'
             });
         }
+        // hashess the password
         let hashedPassword = await bcrypt.hash(password, 8);
         console.log(hashedPassword);
         
-        res.send("testing")
+        // save to the database
+
+        db.query('INSERT INTO users SET ?',{name: name, email: email, password: hashedPassword}, (error,results)=>{
+            if(error){
+                console.log(error);
+            } else{
+                return res.render ('register', {
+                    message: 'User Registerd'
+                });
+            };
+        });
+
     });
 
-
 }
+
+exports.isLoggedIn = async (req, res, next) => {
+    // console.log(req.cookies);
+    if( req.cookies.jwt) {
+      try {
+        //1) verify the token
+        const decoded = await promisify(jwt.verify)(req.cookies.jwt,
+        process.env.JWT_SECRET
+        );
+  
+        console.log(decoded);
+  
+        //2) Check if the user still exists
+        db.query('SELECT * FROM users WHERE id = ?', [decoded.id], (error, result) => {
+          console.log(result);
+  
+          if(!result) {
+            return next();
+          }
+  
+          req.user = result[0];
+          console.log("user is")
+          console.log(req.user);
+          return next();
+  
+        });
+      } catch (error) {
+        console.log(error);
+        return next();
+      }
+    } else {
+      next();
+    }
+  }
+  
+exports.logout = async (req, res) => {
+  res.cookie('jwt', 'logout', {
+    expires: new Date(Date.now() + 2*1000),
+    httpOnly: true
+  });
+
+  res.status(200).redirect('/');
+}
+
+

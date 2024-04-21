@@ -3,16 +3,17 @@ const path = require('path');
 const app = express();
 const mysql = require("mysql");
 const dotenv = require('dotenv');
-
+const cookieParser = require('cookie-parser');
+const Handlebars = require('handlebars');
 dotenv.config({ path: './.env'})
 
-
 const db = mysql.createConnection({
+    database: process.env.DATABASE,
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE
+    password: process.env.DATABASE_PASSWORD
 });
+
 
 const publicDirectory = path.join(__dirname, './public')
 
@@ -22,6 +23,7 @@ app.use(express.static(publicDirectory));
 app.use(express.urlencoded({ extended:false}));
 // Paerse Json bodies
 app.use(express.json());
+app.use(cookieParser());
 
 app.set('view engine', 'hbs');
 
