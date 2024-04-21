@@ -57,11 +57,21 @@
                         <div class="form-group">
                             <label for="space"></label>
                         </div>
+                        <div class="form-group">
+                            <label for="passwordConfirm">Confirm Password:</label>
+                            <input type="passwordConfirm" id="passwordConfirm" name="passwordConfirm" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="space"></label>
+                        </div>
                         <button type="submit" class="btn btn-primary">Register User</but>
                     </form>
                 </section>
             </div>
         </div>
+        {{#if message}}
+        <h4 class="alert alert-danger mt-4"{{message}}></h4>
+        {{/if}}
     </div>
 
 </body>
