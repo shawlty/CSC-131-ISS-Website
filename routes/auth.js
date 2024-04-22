@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.post('/register', authController.register);
 
-router.post('/login', authController.login );
+router.post('/login', authController.login);
 
-router.post('/forum',  authController.postComment);
+router.post('/postComment', authController.postComment);
 
 router.get('/logout', authController.logout );
 

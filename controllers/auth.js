@@ -15,23 +15,25 @@ const db = mysql.createConnection({
 });
 // Define a Handlebars helper function to capitalize the first letter of a string
 
-exports.postComment = (req,res)=>{
-  try{
+exports.postComment = (req,res) => {
   console.log(req.body);
-  const { title, content} = req.body;
-  db.query('INSERT INTO forum SET ?',{title: title, content: content}, (error,results)=>{
-      if(error){
-          console.log(error);
-      } else{
-          return res.render ('forum', {
-              message: 'Comment Posted'
-          });
-      };
-   });
-  }catch(error){
-    console.log(error);
-  }
   
+  const { title, content, user_id } = req.body;
+
+  db.query('INSERT INTO forum SET ?', { title, content, user_id }, (error, results) => {
+    try {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Error posting comment'); // Send error response to the client
+      } else {
+        return res.render('forum', { message: 'Thread Posted' });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send('Error posting comment'); // Send error response to the client
+    }
+  });
+
 }
 
 exports.login = async (req, res) => {
