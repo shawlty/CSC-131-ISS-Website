@@ -14,14 +14,13 @@ router.get('/register',(req,res)=>{
 });
 
 router.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login',{
+      user: req.user,
+    });
   });
 
 router.get('/forum', authController.isLoggedIn, (req, res) => {
-  res.render('forum', {
-    user: req.user,
-    post: req.posts
-  });
+  res.render('forum', {user:req.user})
 });
 
 router.get('/profile', authController.isLoggedIn, (req, res) => {

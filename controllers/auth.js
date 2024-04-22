@@ -4,6 +4,8 @@ const mysql = require("mysql");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { promisify } = require('util');
+const express = require("express");
+const { Console } = require("console");
 
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -13,7 +15,24 @@ const db = mysql.createConnection({
 });
 // Define a Handlebars helper function to capitalize the first letter of a string
 
-
+exports.postComment = (req,res)=>{
+  try{
+  console.log(req.body);
+  const { title, content} = req.body;
+  db.query('INSERT INTO forum SET ?',{title: title, content: content}, (error,results)=>{
+      if(error){
+          console.log(error);
+      } else{
+          return res.render ('forum', {
+              message: 'Comment Posted'
+          });
+      };
+   });
+  }catch(error){
+    console.log(error);
+  }
+  
+}
 
 exports.login = async (req, res) => {
     try {
